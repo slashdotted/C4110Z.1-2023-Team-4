@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Accelerometer, Gyroscope } from 'expo-sensors';
 
 
+
 export default function App() {
   const [data, setData] = useState({});
   
@@ -18,19 +19,20 @@ export default function App() {
   };
   
   let { x, y, z } = data;
-  
+
+  const getAcceleration = (ax, ay, az) => {
+    return Math.sqrt(ax*ax+ay*ay+az*az);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Accelerometer: (in Gs where 1 G = 9.81 m s^-2)</Text>
-      <Text>
-        x: {x}
-      </Text>
-      <Text>
-        y: {y}
-      </Text>
-      <Text>
-        z: {z}
-      </Text>
+      <View style={styles.topText}>
+        <Text style={styles.innerTopText}>SKI ACCIDENT DETECTOR</Text>
+      </View>
+      <TouchableOpacity
+        style={styles.roundButton}>
+        <Text style={styles.whiteText}>START</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -38,19 +40,34 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
+    alignItems: 'center',
     backgroundColor: '#eaeaea',
+    alignContent:'center',
   },
-  title: {
-    marginTop: 16,
-    paddingVertical: 8,
-    borderWidth: 4,
-    borderColor: '#20232a',
-    borderRadius: 6,
-    backgroundColor: '#61dafb',
-    color: '#20232a',
-    textAlign: 'center',
-    fontSize: 30,
-    fontWeight: 'bold',
+  roundButton: {
+    top:'30%',
+    width: 200,
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 100,
+    borderWidth: 6,
+    backgroundColor: 'black',
+    borderColor: 'red',
   },
+  whiteText: {
+    color: 'white',
+    fontSize: 48,
+  },
+  topText:{
+    borderBottomColor:'black',
+    borderBottomWidth:1,
+    height:'12%',
+    width:'150%',
+    backgroundColor:'#fff'
+  },
+  innerTopText:{
+    fontSize: 18,
+  }
 });
