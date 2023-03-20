@@ -1,55 +1,92 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Button } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Button, Alert , FlatList} from 'react-native';
 import { Accelerometer, Gyroscope } from 'expo-sensors';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+
 function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button
-        title="Start"
+      <TouchableOpacity
+        style={styles.roundButton}
         onPress={() =>
           navigation.navigate('Resort', { name: 'Resort' })
-        }
-      />
-      <Button
-        title="Emergency Numbers"
-        onPress={() =>
-          navigation.navigate('EmergencyNumbers', { name: 'Emergency Numbers' })
-        }
-      />
-      <Button
-        title="Resorts"
-        onPress={() =>
-          navigation.navigate('Resort', { name: 'Resort' })
-        }
-      />
+        }>
+        <Text style={styles.whiteText}>START</Text>
+      </TouchableOpacity>
+      <View style={styles.bottomBar}>
+        <TouchableOpacity
+          style={styles.bottomItem}
+          onPress={() =>
+            navigation.navigate('Resort', { name: 'Resort' })
+          }>
+          <Text style={styles.bottomText}>Resort</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.bottomItem}
+        >
+          <Text style={styles.miniRoundButton}></Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.bottomItem}
+          onPress={() =>
+            navigation.navigate('EmergencyNumbers', { name: 'Emergency Numbers' })
+          }>
+          <Text style={styles.bottomText}>Emergency Numbers</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 function ResortScreen({ navigation }) {
+  const [resorts, setResorts] = useState([
+    {resortName:'Lenzerheide', key:'1'},
+    {resortName:'Lenzerheide', key:'2'},
+    {resortName:'Lenzerheide', key:'3'},
+  ]);
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button
-        title="Resort 1"
-      />
-      <Button
-        title="Resort 2"
-      />
-      <Button
-        title="Resort 3"
+      <FlatList
+        data={resorts}
+        renderItem={
+          ({item}) => (
+            <TouchableOpacity>
+              <Text>{item.resortName}</Text>
+            </TouchableOpacity>
+          )
+        }
       />
     </View>
   );
 }
 
 function EmergencyNumbersScreen({ navigation }) {
+  const [emergencyNumbers, setEmergencyNumbers] = useState([
+    {number:'1414', service:'Rega', key:'1'},
+  ]);
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>TODO: ADD EMERGENCY NUMBERS</Text>
+      <FlatList
+        data={emergencyNumbers}
+        renderItem={
+          ({item}) => (
+            <View>
+            <Text>Service: {item.service}</Text>
+            <TouchableOpacity
+              onPress={() => (Alert.alert('Calling Emergency Service', 'The service '+item.service+' is being called',
+              [{text:'Dismiss', onPress: () => (console.log('°Dismissed'))}]))}
+            >
+              <Text>Call: {item.number}</Text>
+            </TouchableOpacity>
+          </View>
+        )
+        }
+      />
     </View>
   );
 }
@@ -94,6 +131,25 @@ export default function App() {
 };
 */
 function App() {
+
+  /*const [data, setData] = useState({});
+
+  useEffect(() => {
+    _subscribe();
+  }, []);
+
+  const _subscribe = () => {
+    this._subscription = Accelerometer.addListener(accelerometerData => {
+      setData(accelerometerData);
+    });
+  };
+
+  let { x, y, z } = data;
+
+  const getAcceleration = (ax, ay, az) => {
+    return Math.sqrt(ax * ax + ay * ay + az * az);
+  };*/
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -118,16 +174,15 @@ function App() {
 }
 
 export default App;
-/* 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#eaeaea',
-    alignContent:'center',
+    alignContent: 'center',
   },
   roundButton: {
-    top:'30%',
     width: 200,
     height: 200,
     justifyContent: 'center',
@@ -145,11 +200,40 @@ const styles = StyleSheet.create({
   topContainer: {
     alignItems: 'center',
     backgroundColor: '#fff',
-    alignContent:'center',
-    height:'10%',
-    width:'100%',
-    color:'black',
-    fontSize:18,
-    marginTop:0
+    alignContent: 'center',
+    height: '10%',
+    width: '100%',
+    color: 'black',
+    fontSize: 18,
+    marginTop: 0
   },
-});*/
+  miniRoundButton: {
+    width:50,
+    height:50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 100,
+    borderWidth: 3,
+    backgroundColor: 'black',
+    borderColor: 'red',
+  },
+  bottomBar: {
+    bottom: 0,
+    marginBottom:0,
+    position:'absolute',
+    flexDirection:'row',
+  },
+  bottomItem: {
+    justifyContent:'space-evenly',
+    alignContent:'center',
+    borderColor:'black',
+    borderWidth:1,
+    flex:1,
+    alignItems:'center',
+    height:75,
+  },
+  bottomText: {
+    fontSize:24,
+  }
+});
