@@ -1,20 +1,42 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Button, Alert , FlatList} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Button, Alert , FlatList, Linking} from 'react-native';
 import { Accelerometer, Gyroscope } from 'expo-sensors';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+let runningStatus = false;
+let statusText = 'START';
 
 function HomeScreen({ navigation }) {
+
+  const [text, setText] = useState(statusText);
+
+  changeStatusText = () => {
+    if(runningStatus){
+      runningStatus = false;
+      setText('START');
+      statusText = 'START';
+    }
+    else {
+      runningStatus = true;
+      setText('STOP');
+      statusText = 'STOP';
+    }
+  }
+
+  startButtonPressed = () =>{
+    changeStatusText();
+    navigation.navigate('Resort', { name: 'Resort' });
+  }
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TouchableOpacity
         style={styles.roundButton}
-        onPress={() =>
-          navigation.navigate('Resort', { name: 'Resort' })
-        }>
-        <Text style={styles.whiteText}>START</Text>
+        onPress={this.startButtonPressed}
+        >
+        <Text style={styles.whiteText}>{text}</Text>
       </TouchableOpacity>
       <View style={styles.bottomBar}>
         <TouchableOpacity
@@ -65,6 +87,14 @@ function ResortScreen({ navigation }) {
 }
 
 function EmergencyNumbersScreen({ navigation }) {
+
+  dialCall = (number) => {
+    let phoneNumber = '';
+    if (Platform.OS === 'android') { phoneNumber = `tel:${number}`; }
+    else {phoneNumber = `telprompt:${number}`; }
+    Linking.openURL(phoneNumber);
+  };
+  
   const [emergencyNumbers, setEmergencyNumbers] = useState([
     {number:'1414', service:'Rega', key:'1'},
   ]);
@@ -77,9 +107,10 @@ function EmergencyNumbersScreen({ navigation }) {
           ({item}) => (
             <View>
             <Text>Service: {item.service}</Text>
+            {/**/}
             <TouchableOpacity
-              onPress={() => (Alert.alert('Calling Emergency Service', 'The service '+item.service+' is being called',
-              [{text:'Dismiss', onPress: () => (console.log('°Dismissed'))}]))}
+              onPress={() => (Alert.alert('Calling Emergency Service', 'Are you sure you want to call the service '+item.service+'?',
+              [{text:'Yes', onPress: () => (dialCall(item.number))}, {text:'No', onPress: () => (console.log('Dismissed'))}]))}
             >
               <Text>Call: {item.number}</Text>
             </TouchableOpacity>
