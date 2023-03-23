@@ -15,5 +15,8 @@ The goal for this project is to create a prototype for an application to detect 
   - Live tracker (GPS for long/lat + altitude)
   - Show options for resorts based on proximity
 
+## Outside Links
+- https://patents.google.com/patent/US20190103007A1/en
+
 ## Download
 Here you will be able to download the latest release of the application.
