@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 
+
 function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -235,5 +236,5 @@ const styles = StyleSheet.create({
   },
   bottomText: {
     fontSize:24,
-  }
+  },
 });
