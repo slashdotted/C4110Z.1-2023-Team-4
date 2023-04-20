@@ -4,54 +4,13 @@ import { StyleSheet, Text, TouchableOpacity, View, Button, Alert , FlatList} fro
 import { Accelerometer, Gyroscope } from 'expo-sensors';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import axios from "axios";
+import Weather from "./Weather";
+
 
 var runningStatus = false;
 
 function HomeScreen({ navigation }) {
-  if(runningStatus){
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <TouchableOpacity
-          style={styles.roundButton}
-          onPress={() =>{
-            runningStatus = !runningStatus;
-            if(runningStatus){
-              log('Accident Detection has started');
-            }
-            else{
-              log('Accident Detection has stopped');
-            }
-            navigation.navigate('Resort', { name: 'Resort' })
-          }
-          }>
-          
-          <Text style={styles.whiteText}>START</Text>
-        </TouchableOpacity>
-        <View style={styles.bottomBar}>
-          <TouchableOpacity
-            style={styles.bottomItem}
-            onPress={() =>
-              navigation.navigate('Resort', { name: 'Resort' })
-            }>
-            <Text style={styles.bottomText}>Resort</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bottomItem}
-          >
-            <Text style={styles.miniRoundButton}></Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bottomItem}
-            onPress={() =>
-              navigation.navigate('EmergencyNumbers', { name: 'Emergency Numbers' })
-            }>
-            <Text style={styles.bottomText}>Emergency Numbers</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-  else{
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TouchableOpacity
@@ -86,12 +45,11 @@ function HomeScreen({ navigation }) {
       </View>
     </View>
   );
-        }
 }
 
 function ResortScreen({ navigation }) {
   const [resorts, setResorts] = useState([
-    {resortName:'Lenzerheide', key:'1'},
+    {resortName:'Splügen', key:'1'},
     {resortName:'Lenzerheide', key:'2'},
     {resortName:'Lenzerheide', key:'3'},
   ]);
@@ -102,7 +60,9 @@ function ResortScreen({ navigation }) {
         data={resorts}
         renderItem={
           ({item}) => (
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(item.resortName, { name: item.resortName })}
+            >
               <Text>{item.resortName}</Text>
             </TouchableOpacity>
           )
@@ -137,6 +97,16 @@ function EmergencyNumbersScreen({ navigation }) {
       />
     </View>
   );
+}
+
+function SplugenResortScreen({ navigation }) {
+
+  return (
+    <View>
+      <Weather lat={46.5528} lon={9.3234}/>
+    </View>
+  );
+  
 }
 
 const Stack = createStackNavigator();
@@ -236,6 +206,11 @@ function App() {
         <Stack.Screen
           name="EmergencyNumbers"
           component={EmergencyNumbersScreen}
+          options={({ route }) => ({ title: route.params.name })}
+        />
+        <Stack.Screen
+          name="Splügen"
+          component={SplugenResortScreen}
           options={({ route }) => ({ title: route.params.name })}
         />
       </Stack.Navigator>
