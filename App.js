@@ -5,15 +5,61 @@ import { Accelerometer, Gyroscope } from 'expo-sensors';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-
+var runningStatus = false;
 
 function HomeScreen({ navigation }) {
+  if(runningStatus){
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <TouchableOpacity
+          style={styles.roundButton}
+          onPress={() =>{
+            runningStatus = !runningStatus;
+            if(runningStatus){
+              log('Accident Detection has started');
+            }
+            else{
+              log('Accident Detection has stopped');
+            }
+            navigation.navigate('Resort', { name: 'Resort' })
+          }
+          }>
+          
+          <Text style={styles.whiteText}>START</Text>
+        </TouchableOpacity>
+        <View style={styles.bottomBar}>
+          <TouchableOpacity
+            style={styles.bottomItem}
+            onPress={() =>
+              navigation.navigate('Resort', { name: 'Resort' })
+            }>
+            <Text style={styles.bottomText}>Resort</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.bottomItem}
+          >
+            <Text style={styles.miniRoundButton}></Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.bottomItem}
+            onPress={() =>
+              navigation.navigate('EmergencyNumbers', { name: 'Emergency Numbers' })
+            }>
+            <Text style={styles.bottomText}>Emergency Numbers</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+  else{
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TouchableOpacity
         style={styles.roundButton}
-        onPress={() =>
+        onPress={() =>{
+          runningStatus = !runningStatus;
           navigation.navigate('Resort', { name: 'Resort' })
+        }
         }>
         <Text style={styles.whiteText}>START</Text>
       </TouchableOpacity>
@@ -40,6 +86,7 @@ function HomeScreen({ navigation }) {
       </View>
     </View>
   );
+        }
 }
 
 function ResortScreen({ navigation }) {
@@ -133,23 +180,45 @@ export default function App() {
 */
 function App() {
 
-  /*const [data, setData] = useState({});
+  const [data, setData] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
+  const [oldData, setOldData] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
 
   useEffect(() => {
-    _subscribe();
+    const subscription = Accelerometer.addListener(accelerometerData => {
+      setOldData(data); // save the current data as old data
+      setData(accelerometerData); // update the current data
+    });
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
-  const _subscribe = () => {
-    this._subscription = Accelerometer.addListener(accelerometerData => {
-      setData(accelerometerData);
-    });
-  };
+  const acceleration = Math.sqrt(
+    Math.pow(data.x, 2) + Math.pow(data.y, 2) + Math.pow(data.z, 2)
+  );
 
-  let { x, y, z } = data;
+  const handleAlert = () => {
+    const threshold = 2.5; // set the threshold for difference between old and new values
+    const delta = Math.abs(acceleration - Math.sqrt(
+      Math.pow(oldData.x, 2) + Math.pow(oldData.y, 2) + Math.pow(oldData.z, 2)
+    ));
+    if (delta > threshold && runningStatus) {
+      Alert.alert('Accident Detected', `Calling the nearest Emergency Service in 30 seconds`, [{ text: 'Cancel' }]);
+    }
+  }
 
-  const getAcceleration = (ax, ay, az) => {
-    return Math.sqrt(ax * ax + ay * ay + az * az);
-  };*/
+  useEffect(() => {
+    handleAlert();
+  }, [data]); // trigger the alert every time the accelerometer data updates
+
 
   return (
     <NavigationContainer>
