@@ -7,18 +7,19 @@ const Weather = ({ lat, lon }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=6e7a4fc969fd023249bddde17f0109bf
-        &units=metric`
+      const result = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=6e7a4fc969fd023249bddde17f0109bf&units=metric`
       );
-      setWeatherData(result.data);
+      const json = await result.json();
+      setWeatherData(json);
     };
     fetchData();
   }, [lat, lon]);
 
   if (!weatherData) return <Text>Loading...</Text>;
 
-  return (
+  return <View><Text>{JSON.stringify(weatherData)}</Text></View>
+  /*return (
     <View>
       <Text style={{ fontSize: 30 }}>
         Current Weather in {location}
@@ -33,7 +34,7 @@ const Weather = ({ lat, lon }) => {
         Wind Speed: {weatherData.wind.speed} m/s
       </Text>
     </View>
-  );
+  );*/
 };
 
 export default Weather;

@@ -1,9 +1,9 @@
 {
-  "expoServerPort": null,
-  "packagerPort": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerPort": 19000,
+  "packagerPort": 19000,
+  "expoServerNgrokUrl": "https://jybo2dw.anonymous.c4110z-1-2023-team-4.exp.direct",
+  "packagerNgrokUrl": "https://jybo2dw.anonymous.c4110z-1-2023-team-4.exp.direct",
+  "ngrokPid": 22000,
   "packagerPid": null,
   "webpackServerPort": null
 }
