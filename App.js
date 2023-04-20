@@ -4,8 +4,11 @@ import { StyleSheet, Text, TouchableOpacity, View, Button, Alert , FlatList, Ima
 import { Accelerometer, Gyroscope } from 'expo-sensors';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import axios from "axios";
+import Weather from "./Weather";
 
 
+var runningStatus = false;
 
 function HomeScreen({ navigation }) {
   return (
@@ -17,9 +20,16 @@ function HomeScreen({ navigation }) {
     </TouchableOpacity>
       <Text style={[styles.blueText, { height: 50, marginTop: 30 }]}>START TRACKING</Text>     
       <TouchableOpacity
+<<<<<<< HEAD
         style={[styles.roundButton, { marginTop: 25 }]}
         onPress={() =>
+=======
+        style={styles.roundButton}
+        onPress={() =>{
+          runningStatus = !runningStatus;
+>>>>>>> f9470297100f9bfd2b0fa703ecf6182f9fcdc636
           navigation.navigate('Resort', { name: 'Resort' })
+        }
         }>
       <Image source={require('./assets/icon.png')} style={styles.logo} /> 
       </TouchableOpacity>
@@ -50,7 +60,7 @@ function HomeScreen({ navigation }) {
 
 function ResortScreen({ navigation }) {
   const [resorts, setResorts] = useState([
-    {resortName:'Lenzerheide', key:'1'},
+    {resortName:'Splügen', key:'1'},
     {resortName:'Lenzerheide', key:'2'},
     {resortName:'Lenzerheide', key:'3'},
   ]);
@@ -61,7 +71,9 @@ function ResortScreen({ navigation }) {
         data={resorts}
         renderItem={
           ({item}) => (
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(item.resortName, { name: item.resortName })}
+            >
               <Text>{item.resortName}</Text>
             </TouchableOpacity>
           )
@@ -96,6 +108,16 @@ function EmergencyNumbersScreen({ navigation }) {
       />
     </View>
   );
+}
+
+function SplugenResortScreen({ navigation }) {
+
+  return (
+    <View>
+      <Weather lat={46.5528} lon={9.3234}/>
+    </View>
+  );
+  
 }
 
 const Stack = createStackNavigator();
@@ -139,23 +161,45 @@ export default function App() {
 */
 function App() {
 
-  /*const [data, setData] = useState({});
+  const [data, setData] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
+  const [oldData, setOldData] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
 
   useEffect(() => {
-    _subscribe();
+    const subscription = Accelerometer.addListener(accelerometerData => {
+      setOldData(data); // save the current data as old data
+      setData(accelerometerData); // update the current data
+    });
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
-  const _subscribe = () => {
-    this._subscription = Accelerometer.addListener(accelerometerData => {
-      setData(accelerometerData);
-    });
-  };
+  const acceleration = Math.sqrt(
+    Math.pow(data.x, 2) + Math.pow(data.y, 2) + Math.pow(data.z, 2)
+  );
 
-  let { x, y, z } = data;
+  const handleAlert = () => {
+    const threshold = 2.5; // set the threshold for difference between old and new values
+    const delta = Math.abs(acceleration - Math.sqrt(
+      Math.pow(oldData.x, 2) + Math.pow(oldData.y, 2) + Math.pow(oldData.z, 2)
+    ));
+    if (delta > threshold && runningStatus) {
+      Alert.alert('Accident Detected', `Calling the nearest Emergency Service in 30 seconds`, [{ text: 'Cancel' }]);
+    }
+  }
 
-  const getAcceleration = (ax, ay, az) => {
-    return Math.sqrt(ax * ax + ay * ay + az * az);
-  };*/
+  useEffect(() => {
+    handleAlert();
+  }, [data]); // trigger the alert every time the accelerometer data updates
+
 
   return (
     <NavigationContainer>
@@ -181,6 +225,11 @@ function App() {
         <Stack.Screen
           name="EmergencyNumbers"
           component={EmergencyNumbersScreen}
+          options={({ route }) => ({ title: route.params.name })}
+        />
+        <Stack.Screen
+          name="Splügen"
+          component={SplugenResortScreen}
           options={({ route }) => ({ title: route.params.name })}
         />
       </Stack.Navigator>
