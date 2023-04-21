@@ -13,21 +13,21 @@ var runningStatus = false;
 function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
-      <Text style={[styles.topText, { marginTop: 10, textAlign: 'center' }]}>Welcome to SafeSki! {"\n"} The current resort selected is: </Text>      
-      <TouchableOpacity style={styles.rectangleBox}>
-      <Text style={styles.boxText}>Splügen</Text>
-      <Image source={require('./assets/splugen_map.jpg')} style={styles.boxImage} /> 
+      <View style={styles.rectangleBorder}>
+        <Text style={[styles.topText, { marginTop: 10, textAlign: 'center' }]}>Welcome to SafeSki! {"\n"} The current resort selected is: </Text>      
+      </View>
+      <TouchableOpacity style={styles.rectangleBox}
+      onPress={() => {
+        navigation.navigate('Resort', {name: 'Resort'})
+      }}
+      >
+      <Image source={require('./assets/splugen_logo.png')} style={styles.splugenLogo} /> 
     </TouchableOpacity>
-      <Text style={[styles.blueText, { height: 50, marginTop: 30 }]}>START TRACKING</Text>     
+      <Text style={[styles.blueText, { height: 50, marginTop: 50 }]}>START TRACKING</Text>     
       <TouchableOpacity
-<<<<<<< HEAD
-        style={[styles.roundButton, { marginTop: 25 }]}
-        onPress={() =>
-=======
         style={styles.roundButton}
         onPress={() =>{
           runningStatus = !runningStatus;
->>>>>>> f9470297100f9bfd2b0fa703ecf6182f9fcdc636
           navigation.navigate('Resort', { name: 'Resort' })
         }
         }>
@@ -71,9 +71,12 @@ function ResortScreen({ navigation }) {
         data={resorts}
         renderItem={
           ({item}) => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate(item.resortName, { name: item.resortName })}
+            <TouchableOpacity style={styles.rectangleBox}
+            onPress={() => {
+              navigation.navigate('SplugenResortScreen', {name: 'SplugenResortScreen'})
+            }}
             >
+              <Image source={require('./assets/splugen_logo.png')} style={styles.splugenLogo} /> 
               <Text>{item.resortName}</Text>
             </TouchableOpacity>
           )
@@ -253,6 +256,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 100,
     backgroundColor: 0x73c2c9,
+    marginTop: 30,
   },
   whiteText: {
     color: 'white',
@@ -260,7 +264,7 @@ const styles = StyleSheet.create({
   },
   blueText: {
     color: 0x73c2fb,
-    fontSize: 40,
+    fontSize: 35,
     fontFamily: 'Roboto',
   },
   topContainer: {
@@ -274,11 +278,12 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   logo: {
-    width: 100,
+    width: 115,
     height: 100,
+    marginTop: -20,
   },
   logoBottom: {
-    width: 60,
+    width: 70,
     height: 60,
   },
   bottomBar: {
@@ -307,11 +312,21 @@ const styles = StyleSheet.create({
   },
   rectangleBox: {
     backgroundColor: 0x73c2c9,
-    height: 160,
-    width: 390,
+    height: 110,
+    width: 370,
     padding: 3,
-    borderRadius: 10,
-    marginTop: 20,
+    borderRadius: 20,
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  rectangleBorder:{
+    borderWidth: 3,
+    borderColor: 0x73c2c9,
+    height: 90,
+    width: 330,
+    padding: 3,
+    borderRadius: 20,
+    marginTop: 15,
     alignItems: 'center',
   },
   boxText: {
@@ -322,6 +337,10 @@ const styles = StyleSheet.create({
   boxImage: {
     width: 250,
     height: 120,
+  },
+  splugenLogo:{
+    width: 250,
+    height: 100,
   },
   banner: {
     height: 55,
