@@ -1,10 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Button, Alert , FlatList, Image} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Button, Alert, FlatList, Image, Dimensions, ScrollView } from 'react-native';
 import { Accelerometer, Gyroscope } from 'expo-sensors';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import axios from "axios";
 import Weather from "./Weather";
 
 
@@ -14,24 +13,24 @@ function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
       <View style={styles.rectangleBorder}>
-        <Text style={[styles.topText, { marginTop: 10, textAlign: 'center' }]}>Welcome to SafeSki! {"\n"} The current resort selected is: </Text>      
+        <Text style={[styles.topText, { marginTop: 10, textAlign: 'center' }]}>Welcome to SafeSki! {"\n"} The current resort selected is: </Text>
       </View>
       <TouchableOpacity style={styles.rectangleBox}
-      onPress={() => {
-        navigation.navigate('Resort', {name: 'Resort'})
-      }}
+        onPress={() => {
+          navigation.navigate('Resort', { name: 'Resort' })
+        }}
       >
-      <Image source={require('./assets/splugen_logo.png')} style={styles.splugenLogo} /> 
-    </TouchableOpacity>
-      <Text style={[styles.blueText, { height: 50, marginTop: 50 }]}>START TRACKING</Text>     
+        <Image source={require('./assets/splugen_logo.png')} style={styles.splugenLogo} />
+      </TouchableOpacity>
+      <Text style={[styles.blueText, { height: 50, marginTop: 50 }]}>START TRACKING</Text>
       <TouchableOpacity
         style={styles.roundButton}
-        onPress={() =>{
+        onPress={() => {
           runningStatus = !runningStatus;
           navigation.navigate('Resort', { name: 'Resort' })
         }
         }>
-      <Image source={require('./assets/icon.png')} style={styles.logo} /> 
+        <Image source={require('./assets/icon.png')} style={styles.logo} />
       </TouchableOpacity>
       <View style={styles.bottomBar}>
         <TouchableOpacity
@@ -44,7 +43,7 @@ function HomeScreen({ navigation }) {
         <TouchableOpacity
           style={styles.bottomItem}
         >
-        <Image source={require('./assets/icon.png')} style={styles.logoBottom} /> 
+          <Image source={require('./assets/icon.png')} style={styles.logoBottom} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.bottomItem}
@@ -60,9 +59,9 @@ function HomeScreen({ navigation }) {
 
 function ResortScreen({ navigation }) {
   const [resorts, setResorts] = useState([
-    {resortName:'Splügen', key:'1'},
-    {resortName:'Lenzerheide', key:'2'},
-    {resortName:'Lenzerheide', key:'3'},
+    { resortName: 'Splügen', key: '1' },
+    { resortName: 'Lenzerheide', key: '2' },
+    { resortName: 'Lenzerheide', key: '3' },
   ]);
 
   return (
@@ -70,14 +69,13 @@ function ResortScreen({ navigation }) {
       <FlatList
         data={resorts}
         renderItem={
-          ({item}) => (
+          ({ item }) => (
             <TouchableOpacity style={styles.rectangleBox}
-            onPress={() => {
-              navigation.navigate('SplugenResortScreen', {name: 'SplugenResortScreen'})
-            }}
+              onPress={() => {
+                navigation.navigate(item.resortName, { name: item.resortName })
+              }}
             >
-              <Image source={require('./assets/splugen_logo.png')} style={styles.splugenLogo} /> 
-              <Text>{item.resortName}</Text>
+              <Image source={require('./assets/splugen_logo.png')} style={styles.splugenLogo} />
             </TouchableOpacity>
           )
         }
@@ -88,7 +86,7 @@ function ResortScreen({ navigation }) {
 
 function EmergencyNumbersScreen({ navigation }) {
   const [emergencyNumbers, setEmergencyNumbers] = useState([
-    {number:'1414', service:'Rega', key:'1'},
+    { number: '1414', service: 'Rega', key: '1' },
   ]);
 
   return (
@@ -96,17 +94,17 @@ function EmergencyNumbersScreen({ navigation }) {
       <FlatList
         data={emergencyNumbers}
         renderItem={
-          ({item}) => (
+          ({ item }) => (
             <View>
-            <Text>Service: {item.service}</Text>
-            <TouchableOpacity
-              onPress={() => (Alert.alert('Calling Emergency Service', 'The service '+item.service+' is being called',
-              [{text:'Dismiss', onPress: () => (console.log('°Dismissed'))}]))}
-            >
-              <Text>Call: {item.number}</Text>
-            </TouchableOpacity>
-          </View>
-        )
+              <Text>Service: {item.service}</Text>
+              <TouchableOpacity
+                onPress={() => (Alert.alert('Calling Emergency Service', 'The service ' + item.service + ' is being called',
+                  [{ text: 'Dismiss', onPress: () => (console.log('Dismissed')) }]))}
+              >
+                <Text>Call: {item.number}</Text>
+              </TouchableOpacity>
+            </View>
+          )
         }
       />
     </View>
@@ -115,12 +113,41 @@ function EmergencyNumbersScreen({ navigation }) {
 
 function SplugenResortScreen({ navigation }) {
 
+  const [language, setLanguage] = useState("en");
+  const [unit, setUnit] = useState("metric");
+  const { width, height } = Dimensions.get('window');
+
+
   return (
     <View>
-      <Weather lat={46.5528} lon={9.3234}/>
+        <View style={styles.navBar}>
+
+          <View style={styles.lanMenu}>
+            <TouchableOpacity onPress={() => setLanguage("en")} style={styles.navBarItem}>
+              <Text>EN</Text>
+            </TouchableOpacity>
+            <Text>|</Text>
+            <TouchableOpacity onPress={() => setLanguage("it")} style={styles.navBarItem}>
+              <Text>IT</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.unitMenu}>
+            <TouchableOpacity onPress={() => setUnit("metric")} style={styles.navBarItem}>
+              <Text>Metric</Text>
+            </TouchableOpacity>
+            <Text>|</Text>
+            <TouchableOpacity onPress={() => setUnit("imperial")} style={styles.navBarItem}>
+              <Text>Imperial</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <Weather lat={46.5528} lon={9.3234} lan={language} un={unit} />
+        <View>
+          <Image source={require('./assets/splugen_map.jpg')} resizeMode='contain' style={{ height: height , width: width}} />
+        </View>
     </View>
   );
-  
+
 }
 
 const Stack = createStackNavigator();
@@ -210,15 +237,16 @@ function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ headerTitle: () => (
-            <Image
-              source={require('./assets/banner.png')}
-              style={styles.banner}
-            />
-          ), 
-          headerStyle: { height: 130 },
-          headerTitleAlign: 'center',
-        }}
+          options={{
+            headerTitle: () => (
+              <Image
+                source={require('./assets/banner.png')}
+                style={styles.banner}
+              />
+            ),
+            headerStyle: { height: 130 },
+            headerTitleAlign: 'center',
+          }}
         />
         <Stack.Screen
           name="Resort"
@@ -288,18 +316,18 @@ const styles = StyleSheet.create({
   },
   bottomBar: {
     bottom: 0,
-    marginBottom:0,
-    position:'absolute',
-    flexDirection:'row',
+    marginBottom: 0,
+    position: 'absolute',
+    flexDirection: 'row',
   },
   bottomItem: {
-    justifyContent:'space-evenly',
-    alignContent:'center',
-    borderColor:'black',
-    borderWidth:1,
-    flex:1,
-    alignItems:'center',
-    height:100,
+    justifyContent: 'space-evenly',
+    alignContent: 'center',
+    borderColor: 'black',
+    borderWidth: 1,
+    flex: 1,
+    alignItems: 'center',
+    height: 100,
   },
   bottomText: {
     fontSize: 16,
@@ -319,7 +347,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     alignItems: 'center',
   },
-  rectangleBorder:{
+  rectangleBorder: {
     borderWidth: 3,
     borderColor: 0x73c2c9,
     height: 90,
@@ -338,12 +366,38 @@ const styles = StyleSheet.create({
     width: 250,
     height: 120,
   },
-  splugenLogo:{
+  splugenLogo: {
     width: 250,
     height: 100,
   },
   banner: {
     height: 55,
     width: 340,
-  }
+  },
+  navBar: {
+    backgroundColor: 0x73c2c9,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    height: 60,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+    position: 'relative',
+    top: 0,
+  },
+  navBarItem: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  lanMenu: {
+    flex: 2,
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+
+  },
+  unitMenu: {
+    flex: 1,
+    alignItems: 'flex-end',
+    flexDirection: 'row'
+  },
 });
