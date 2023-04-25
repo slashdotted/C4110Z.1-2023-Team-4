@@ -232,7 +232,7 @@ function SplugenResortScreen({ navigation }) {
         <Image
           source={require("./assets/splugen_map.jpg")}
           resizeMode="contain"
-          style={{ height: height, width: width, marginTop: -200 }}
+          style={{ height: height, width: width, marginTop: -230 }}
         />
       </View>
     </View>
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     margin: 10,
-    marginTop: 60,
+    marginTop: 50,
   },
   roundButton: {
     width: 180,
