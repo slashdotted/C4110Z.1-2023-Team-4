@@ -15,6 +15,14 @@ const davosLogo = require('./assets/davos_logo.png');
 var runningStatus = false;
 
 function HomeScreen({ navigation }) {
+  const [timerIntervals, setTimerIntervals] = useState([]);
+
+  const onTimerLogoPress = () => {
+    navigation.navigate('TrackingScreen', {
+      timerIntervals: timerIntervals,
+      setTimerIntervals: setTimerIntervals,
+    });
+  };
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
       <View style={styles.rectangleBorderHome}>
@@ -32,7 +40,7 @@ function HomeScreen({ navigation }) {
         style={styles.roundButton}
         onPress={() => {
           runningStatus = !runningStatus;
-          navigation.navigate('TrakingScreen', { name: 'Track your day' });
+          navigation.navigate('TrackingScreen', { name: 'Track your day', timerIntervals: timerIntervals, setTimerIntervals: setTimerIntervals, });
         }}
 >
         <Image source={require('./assets/icon.png')} style={styles.logo} />
@@ -53,9 +61,7 @@ function HomeScreen({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.bottomItem}
-          onPress={() =>
-            navigation.navigate('TrakingScreen', { name: 'Track your day' })
-          }>
+          onPress={onTimerLogoPress}>
         <Image source={require('./assets/timerLogo.png')} style={styles.logoBottomTimer} />
         </TouchableOpacity>
       </View>
@@ -109,9 +115,14 @@ function ResortScreen({ navigation }) {
   );
 }
 
-function TrakingScreen({ navigation }) {
+function TrackingScreen({ navigation, route }) {
   const [time, setTime] = useState(0);
-
+  const params = route ? route.params : navigation.state.params;
+  const { timerIntervals, setTimerIntervals } = {
+    timerIntervals: [],
+    setTimerIntervals: () => {},
+    ...params,
+  };
   useEffect(() => {
     let timeout = null;
     let startTime = null;
@@ -130,7 +141,14 @@ function TrakingScreen({ navigation }) {
 
     return () => clearTimeout(timeout);
   }, [runningStatus]);
-  
+
+  useEffect(() => {
+    if (timerIntervals.length > 0) {
+      const lastInterval = timerIntervals[timerIntervals.length - 1];
+      setTime(lastInterval);
+    }
+  }, [timerIntervals]);
+
   const formatTime = (time) => {
     const hours = Math.floor(time / 3600)
       .toString()
@@ -142,23 +160,27 @@ function TrakingScreen({ navigation }) {
     return `${hours}:${minutes}:${seconds}`;
   };
 
+  const onStopButtonPress = () => {
+    runningStatus = !runningStatus;
+    setTimerIntervals([...timerIntervals, time]);
+    setTime(0);
+    navigation.navigate('Home');
+  };
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', marginBottom: 175 }}>
+      {timerIntervals.map((interval, index) => (
+        <Text key={index} style={{ fontSize: 20 }}>{`Interval ${index + 1}: ${formatTime(interval)}`}</Text>
+      ))}
       <Text style={{ fontSize: 35 }}>{formatTime(time)}</Text>
       <Text style={[styles.blueText, { height: 50, marginTop: 35 }]}>STOP TRACKING</Text>
-      <TouchableOpacity
-        onPress={() => {
-          runningStatus = !runningStatus;
-          setTime(0);
-          navigation.navigate('Home');
-        }}
-        style={styles.roundButtonTracking}
-      >
+      <TouchableOpacity onPress={onStopButtonPress} style={styles.roundButtonTracking}>
         <Image source={require('./assets/icon.png')} style={styles.logo} />
       </TouchableOpacity>
     </View>
   );
 }
+
 
 
 function SplugenResortScreen({ navigation }) {
@@ -170,31 +192,49 @@ function SplugenResortScreen({ navigation }) {
 
   return (
     <View>
-        <View style={styles.navBar}>
-
-          <View style={styles.lanMenu}>
-            <TouchableOpacity onPress={() => setLanguage("en")} style={styles.navBarItem}>
-              <Text>EN</Text>
-            </TouchableOpacity>
-            <Text>|</Text>
-            <TouchableOpacity onPress={() => setLanguage("it")} style={styles.navBarItem}>
-              <Text>IT</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.unitMenu}>
-            <TouchableOpacity onPress={() => setUnit("metric")} style={styles.navBarItem}>
-              <Text>Metric</Text>
-            </TouchableOpacity>
-            <Text>|</Text>
-            <TouchableOpacity onPress={() => setUnit("imperial")} style={styles.navBarItem}>
-              <Text>Imperial</Text>
-            </TouchableOpacity>
-          </View>
+      <View style={styles.navBar}>
+        <View style={styles.lanMenu}>
+          <TouchableOpacity
+            onPress={() => setLanguage("en")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>English</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setLanguage("it")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>Italiano</Text>
+          </TouchableOpacity>
         </View>
+        <View style={styles.unitMenu}>
+          <TouchableOpacity
+            onPress={() => setUnit("metric")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>Metric</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setUnit("imperial")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>Imperial</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.rectangleBorderSplugen}>
+        <Text style={[styles.topTextSplugen, { textAlign: 'center', justifyContent: 'center' }]}>Splügen</Text>
+      </View>
+      <View style={styles.weatherContainer}>
         <Weather lat={46.5528} lon={9.3234} lan={language} un={unit} />
-        <View>
-          <Image source={require('./assets/splugen_map.jpg')} resizeMode='contain' style={{ height: height , width: width}} />
-        </View>
+      </View>
+      <View>
+        <Image
+          source={require("./assets/splugen_map.jpg")}
+          resizeMode="contain"
+          style={{ height: height, width: width, marginTop: -200 }}
+        />
+      </View>
     </View>
   );
 
@@ -304,8 +344,8 @@ function App() {
           options={({ route }) => ({ title: route.params.name })}
         />
         <Stack.Screen
-          name="TrakingScreen"
-          component={TrakingScreen}
+          name="TrackingScreen"
+          component={TrackingScreen}
           options={({ route }) => ({ title: route.params.name })}
         />
         <Stack.Screen
@@ -326,6 +366,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#eaeaea',
     alignContent: 'center',
+  },
+  weatherContainer: {
+    borderWidth: 3,
+    borderColor: 0x73c2f9,
+    borderRadius: 10,
+    padding: 10,
+    margin: 10,
+    marginTop: 60,
   },
   roundButton: {
     width: 180,
@@ -442,7 +490,7 @@ const styles = StyleSheet.create({
   
   rectangleBorderHome: {
     borderWidth: 3,
-    borderColor: 0x73c2c9,
+    borderColor: 0x73c2f9,
     height: 90,
     width: 330,
     padding: 3,
@@ -452,13 +500,26 @@ const styles = StyleSheet.create({
   },
   rectangleBorderResorts: {
     borderWidth: 3,
-    borderColor: 0x73c2c9,
+    borderColor: 0x73c2f9,
     padding: 5,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
   },  
+  rectangleBorderSplugen: {
+    borderWidth: 3,
+    borderColor: 0x73c2f9,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 180,
+    marginTop: 30,
+    marginLeft: 115,
+  },  
+  topTextSplugen: {
+    fontSize: 28,
+    color: 0x73c2fb,
+  },
   boxText: {
     color: 'white',
     fontSize: 20,
@@ -482,29 +543,37 @@ const styles = StyleSheet.create({
     width: 340,
   },
   navBar: {
-    backgroundColor: 0x73c2c9,
+    backgroundColor: '#f3f3f3',
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
     height: 60,
     borderTopWidth: 1,
     borderTopColor: '#ccc',
     position: 'relative',
     top: 0,
+    borderBottomWidth: 2,
+    borderBottomColor: 0x73c2f9,
   },
   navBarItem: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   lanMenu: {
-    flex: 2,
-    alignItems: 'flex-start',
+    flex: 1,
+    alignItems: 'center',
     flexDirection: 'row',
-
+    marginLeft: 10,
   },
   unitMenu: {
-    flex: 1,
-    alignItems: 'flex-end',
+    flex: 0.80,
+    alignItems: 'center',
     flexDirection: 'row'
+  },
+  navBarItemContainer: {
+    backgroundColor: 0x73c2c9,
+    borderRadius: 5,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    marginRight: 5,
   },
 });

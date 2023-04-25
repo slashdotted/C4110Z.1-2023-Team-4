@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import axios from "axios";
+import App from "./App";
 
 const Weather = ({ lat, lon, lan, un }) => {
   const [weatherData, setWeatherData] = useState(null);
@@ -35,17 +36,42 @@ const Weather = ({ lat, lon, lan, un }) => {
       </Text>
     </View>
   );*/
+
+  const handleSkiPatrolPress = () => {
+    Alert.alert(
+      "Ski Patrol",
+      "The ski patrol is being called",
+      [
+        {
+          text: "OK",
+          onPress: () => console.log("OK Pressed"),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <View>
       {weatherData && (
         <>
-          <Text>{lan == "en" ? "Location" : "Luogo"}: {weatherData.name}</Text>
-          <Text>{lan == "en" ? "Temperature" : "Temperatura"}: {weatherData.main.temp}{un == "metric"? "°C": "°F"}</Text>
-          <Text>{lan == "en" ? "Weather" : "Meteo sul luogo"}: {weatherData.weather[0].description}</Text>
+          <Text style={styles.topText}>{lan == "en" ? "Location" : "Luogo"}: {weatherData.name}</Text>
+          <Text style={styles.topText}>{lan == "en" ? "Temperature" : "Temperatura"}: {weatherData.main.temp}{un == "metric"? "°C": "°F"}</Text>
+          <Text style={styles.topText}>{lan == "en" ? "Weather" : "Meteo sul luogo"}: {weatherData.weather[0].description}</Text>
+          <TouchableOpacity onPress={() => handleSkiPatrolPress()}>
+            <Text style={styles.topText}>{lan == "en" ? "Ski patrol number: 081 650 90 10" : "Numero della pattuglia sciistica: 081 650 90 10"}</Text>
+          </TouchableOpacity>
         </>
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  topText: {
+    fontSize: 20,
+    color: 0x73c2fb,
+  },
+});
 
 export default Weather;
