@@ -6,13 +6,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Weather from "./Weather";
 
+const splugenLogo = require('./assets/splugen_logo.png');
+const tusseyMountainLogo = require('./assets/tussey_mountain_logo.webp');
+const davosLogo = require('./assets/davos_logo.png');
+
+
 
 var runningStatus = false;
 
 function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
-      <View style={styles.rectangleBorder}>
+      <View style={styles.rectangleBorderHome}>
         <Text style={[styles.topText, { marginTop: 10, textAlign: 'center' }]}>Welcome to SafeSki! {"\n"} The current resort selected is: </Text>
       </View>
       <TouchableOpacity style={styles.rectangleBox}
@@ -20,25 +25,26 @@ function HomeScreen({ navigation }) {
           navigation.navigate('Resort', { name: 'Resort' })
         }}
       >
-        <Image source={require('./assets/splugen_logo.png')} style={styles.splugenLogo} />
+        <Image source={require('./assets/splugen_logo.png')} style={styles.resortLogoHome} />
       </TouchableOpacity>
       <Text style={[styles.blueText, { height: 50, marginTop: 50 }]}>START TRACKING</Text>
       <TouchableOpacity
         style={styles.roundButton}
         onPress={() => {
           runningStatus = !runningStatus;
-          navigation.navigate('Resort', { name: 'Resort' })
-        }
-        }>
+          navigation.navigate('TrakingScreen', { name: 'Track your day' });
+        }}
+>
         <Image source={require('./assets/icon.png')} style={styles.logo} />
       </TouchableOpacity>
+
       <View style={styles.bottomBar}>
         <TouchableOpacity
           style={styles.bottomItem}
           onPress={() =>
             navigation.navigate('Resort', { name: 'Resort' })
           }>
-          <Text style={styles.bottomText}>Resort</Text>
+        <Image source={require('./assets/resortsLogo.png')} style={styles.logoBottomResort} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.bottomItem}
@@ -48,9 +54,9 @@ function HomeScreen({ navigation }) {
         <TouchableOpacity
           style={styles.bottomItem}
           onPress={() =>
-            navigation.navigate('EmergencyNumbers', { name: 'Emergency Numbers' })
+            navigation.navigate('TrakingScreen', { name: 'Track your day' })
           }>
-          <Text style={styles.bottomText}>Emergency Numbers</Text>
+        <Image source={require('./assets/timerLogo.png')} style={styles.logoBottomTimer} />
         </TouchableOpacity>
       </View>
     </View>
@@ -59,57 +65,101 @@ function HomeScreen({ navigation }) {
 
 function ResortScreen({ navigation }) {
   const [resorts, setResorts] = useState([
-    { resortName: 'Splügen', key: '1' },
-    { resortName: 'Lenzerheide', key: '2' },
-    { resortName: 'Lenzerheide', key: '3' },
+    { resortName: 'Splügen', key: '1', imagePath: splugenLogo, text: 'Splügen' },
+    { resortName: 'Tussey Mountain', key: '2', imagePath: tusseyMountainLogo, text: 'Tussey Mountain' },
+    { resortName: 'Davos', key: '3', imagePath: davosLogo, text: 'Davos' },
   ]);
+  
+
+  const getImagePath = (resortName) => {
+    switch (resortName) {
+      case 'Splügen':
+        return require('./assets/splugen_logo.png');
+      case 'Tussey Mountain':
+        return require('./assets/tussey_mountain_logo.webp');
+      case 'Davos':
+        return require('./assets/davos_logo.png');
+      default:
+    }
+  };
+  
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
       <FlatList
         data={resorts}
-        renderItem={
-          ({ item }) => (
-            <TouchableOpacity style={styles.rectangleBox}
-              onPress={() => {
-                navigation.navigate(item.resortName, { name: item.resortName })
-              }}
-            >
-              <Image source={require('./assets/splugen_logo.png')} style={styles.splugenLogo} />
-            </TouchableOpacity>
-          )
-        }
+        renderItem={({ item }) => (
+        <View style={{ alignItems: 'center' }}>
+          <View style={styles.rectangleBorderResorts}>
+            <Text style={[styles.topText, { textAlign: 'center', justifyContent: 'center' }]}>{item.text}</Text>
+          </View>
+          <TouchableOpacity
+          style={styles.rectangleBoxResorts}
+          onPress={() => {
+            navigation.navigate(item.resortName, { name: item.resortName });
+          }}
+          >
+          <Image source={getImagePath(item.resortName)} style={styles.resortLogoResorts} resizeMode="contain" />
+          </TouchableOpacity>
+        </View>
+        )}
       />
+
     </View>
   );
 }
 
-function EmergencyNumbersScreen({ navigation }) {
-  const [emergencyNumbers, setEmergencyNumbers] = useState([
-    { number: '1414', service: 'Rega', key: '1' },
-  ]);
+function TrakingScreen({ navigation }) {
+  const [time, setTime] = useState(0);
+
+  useEffect(() => {
+    let timeout = null;
+    let startTime = null;
+
+    function tick() {
+      setTime(Math.floor((Date.now() - startTime) / 1000));
+      timeout = setTimeout(tick, 1000 - ((Date.now() - startTime) % 1000));
+    }
+
+    if (runningStatus) {
+      startTime = Date.now();
+      tick();
+    } else {
+      clearTimeout(timeout);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [runningStatus]);
+  
+  const formatTime = (time) => {
+    const hours = Math.floor(time / 3600)
+      .toString()
+      .padStart(2, '0');
+    const minutes = Math.floor((time % 3600) / 60)
+      .toString()
+      .padStart(2, '0');
+    const seconds = (time % 60).toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <FlatList
-        data={emergencyNumbers}
-        renderItem={
-          ({ item }) => (
-            <View>
-              <Text>Service: {item.service}</Text>
-              <TouchableOpacity
-                onPress={() => (Alert.alert('Calling Emergency Service', 'The service ' + item.service + ' is being called',
-                  [{ text: 'Dismiss', onPress: () => (console.log('Dismissed')) }]))}
-              >
-                <Text>Call: {item.number}</Text>
-              </TouchableOpacity>
-            </View>
-          )
-        }
-      />
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', marginBottom: 175 }}>
+      <Text style={{ fontSize: 35 }}>{formatTime(time)}</Text>
+      <Text style={[styles.blueText, { height: 50, marginTop: 35 }]}>STOP TRACKING</Text>
+      <TouchableOpacity
+        onPress={() => {
+          runningStatus = !runningStatus;
+          setTime(0);
+          navigation.navigate('Home');
+        }}
+        style={styles.roundButtonTracking}
+      >
+        <Image source={require('./assets/icon.png')} style={styles.logo} />
+      </TouchableOpacity>
     </View>
   );
 }
+
 
 function SplugenResortScreen({ navigation }) {
 
@@ -254,8 +304,8 @@ function App() {
           options={({ route }) => ({ title: route.params.name })}
         />
         <Stack.Screen
-          name="EmergencyNumbers"
-          component={EmergencyNumbersScreen}
+          name="TrakingScreen"
+          component={TrakingScreen}
           options={({ route }) => ({ title: route.params.name })}
         />
         <Stack.Screen
@@ -285,6 +335,19 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: 0x73c2c9,
     marginTop: 30,
+    borderWidth: 3,
+    borderColor: 0x73c2f9,
+  },
+  roundButtonTracking: {
+    width: 180,
+    height: 180,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    backgroundColor: 0x73c2c9,
+    marginTop: 40,
+    borderWidth: 3,
+    borderColor: 0x73c2f9,
   },
   whiteText: {
     color: 'white',
@@ -294,6 +357,12 @@ const styles = StyleSheet.create({
     color: 0x73c2fb,
     fontSize: 35,
     fontFamily: 'Roboto',
+  },
+  blackText:{
+    fontFamily: 'Roboto',
+    fontSize:35,
+    marginBottom: 10,
+    color: 'black'
   },
   topContainer: {
     alignItems: 'center',
@@ -314,12 +383,21 @@ const styles = StyleSheet.create({
     width: 70,
     height: 60,
   },
+  logoBottomResort: {
+    width: 80,
+    height: 70,
+  },
+  logoBottomTimer: {
+    width: 60,
+    height: 65,
+  },
   bottomBar: {
     bottom: 0,
     marginBottom: 0,
     position: 'absolute',
     flexDirection: 'row',
   },
+  
   bottomItem: {
     justifyContent: 'space-evenly',
     alignContent: 'center',
@@ -346,8 +424,23 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 15,
     alignItems: 'center',
+    borderWidth: 3,
+    borderColor: 0x73c2f9,
   },
-  rectangleBorder: {
+  rectangleBoxResorts: {
+    backgroundColor: 0x73c2c9,
+    height: 150,
+    width: 370,
+    padding: 3,
+    borderRadius: 20,
+    marginTop: 15,
+    marginBottom: 30,
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: 0x73c2f9,
+  },
+  
+  rectangleBorderHome: {
     borderWidth: 3,
     borderColor: 0x73c2c9,
     height: 90,
@@ -357,6 +450,15 @@ const styles = StyleSheet.create({
     marginTop: 15,
     alignItems: 'center',
   },
+  rectangleBorderResorts: {
+    borderWidth: 3,
+    borderColor: 0x73c2c9,
+    padding: 5,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },  
   boxText: {
     color: 'white',
     fontSize: 20,
@@ -366,9 +468,14 @@ const styles = StyleSheet.create({
     width: 250,
     height: 120,
   },
-  splugenLogo: {
+  resortLogoHome: {
     width: 250,
     height: 100,
+  },
+  resortLogoResorts: {
+    marginTop: 10,
+    width: 350,
+    height: 120,
   },
   banner: {
     height: 55,
