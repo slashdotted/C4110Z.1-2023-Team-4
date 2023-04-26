@@ -37,20 +37,6 @@ const Weather = ({ lat, lon, lan, un }) => {
     </View>
   );*/
 
-  const handleSkiPatrolPress = () => {
-    Alert.alert(
-      "Ski Patrol",
-      "The ski patrol is being called",
-      [
-        {
-          text: "OK",
-          onPress: () => console.log("OK Pressed"),
-        },
-      ],
-      { cancelable: true }
-    );
-  };
-
   return (
     <View>
       {weatherData && (
@@ -58,9 +44,7 @@ const Weather = ({ lat, lon, lan, un }) => {
           <Text style={styles.topText}>{lan == "en" ? "Location" : "Luogo"}: {weatherData.name}</Text>
           <Text style={styles.topText}>{lan == "en" ? "Temperature" : "Temperatura"}: {weatherData.main.temp}{un == "metric"? "°C": "°F"}</Text>
           <Text style={styles.topText}>{lan == "en" ? "Weather" : "Meteo sul luogo"}: {weatherData.weather[0].description}</Text>
-          <TouchableOpacity onPress={() => handleSkiPatrolPress()}>
-            <Text style={styles.topText}>{lan == "en" ? "Ski patrol number: 081 650 90 10" : "Numero della pattuglia sciistica: 081 650 90 10"}</Text>
-          </TouchableOpacity>
+          
         </>
       )}
     </View>

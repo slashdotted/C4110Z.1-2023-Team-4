@@ -189,6 +189,19 @@ function SplugenResortScreen({ navigation }) {
   const [unit, setUnit] = useState("metric");
   const { width, height } = Dimensions.get('window');
 
+  const handleSkiPatrolPress = () => {
+    Alert.alert(
+      "Ski Patrol",
+      "The ski patrol is being called",
+      [
+        {
+          text: "OK",
+          onPress: () => console.log("OK Pressed"),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   return (
     <View>
@@ -228,11 +241,16 @@ function SplugenResortScreen({ navigation }) {
       <View style={styles.weatherContainer}>
         <Weather lat={46.5528} lon={9.3234} lan={language} un={unit} />
       </View>
+      <TouchableOpacity onPress={() => handleSkiPatrolPress()} style={styles.buttonContainer}>
+        <View style={styles.button}>
+          <Text style={styles.topText}>Ski patrol number: 081 650 90 10</Text>
+        </View>
+      </TouchableOpacity>
       <View>
         <Image
           source={require("./assets/splugen_map.jpg")}
           resizeMode="contain"
-          style={{ height: height, width: width, marginTop: -230 }}
+          style={{ height: height, width: width, marginTop: -250 }}
         />
       </View>
     </View>
@@ -374,6 +392,18 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     marginTop: 50,
+  },
+  button: {
+    backgroundColor: "#73c2fb",
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  buttonContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 10,
+    zIndex: 1,
   },
   roundButton: {
     width: 180,
