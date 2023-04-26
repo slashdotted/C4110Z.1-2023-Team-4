@@ -35,7 +35,7 @@ function HomeScreen({ navigation }) {
           navigation.navigate('Resort', { name: 'Resort', updateResortLogo: setResortLogo });
         }}
       >
-        <Image source={resortLogo} style={[styles.resortLogoHome, {resizeMode: 'contain'}]} />
+        <Image source={resortLogo} style={[styles.resortLogoHome, { resizeMode: 'contain' }]} />
       </TouchableOpacity>
       <Text style={[styles.blueText, { height: 50, marginTop: 50 }]}>START TRACKING</Text>
       <TouchableOpacity
@@ -44,7 +44,7 @@ function HomeScreen({ navigation }) {
           runningStatus = !runningStatus;
           navigation.navigate('TrackingScreen', { name: 'Track your day', timerIntervals: timerIntervals, setTimerIntervals: setTimerIntervals, });
         }}
->
+      >
         <Image source={require('./assets/icon.png')} style={styles.logo} />
       </TouchableOpacity>
 
@@ -52,9 +52,9 @@ function HomeScreen({ navigation }) {
         <TouchableOpacity
           style={styles.bottomItem}
           onPress={() =>
-            navigation.navigate('Resort', { name: 'Resort' })
+            navigation.navigate('Resort', { name: 'Resort', updateResortLogo: setResortLogo })
           }>
-        <Image source={require('./assets/resortsLogo.png')} style={styles.logoBottomResort} />
+          <Image source={require('./assets/resortsLogo.png')} style={styles.logoBottomResort} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.bottomItem}
@@ -64,7 +64,7 @@ function HomeScreen({ navigation }) {
         <TouchableOpacity
           style={styles.bottomItem}
           onPress={onTimerLogoPress}>
-        <Image source={require('./assets/timerLogo.png')} style={styles.logoBottomTimer} />
+          <Image source={require('./assets/timerLogo.png')} style={styles.logoBottomTimer} />
         </TouchableOpacity>
       </View>
     </View>
@@ -77,7 +77,7 @@ function ResortScreen({ navigation, route }) {
     { resortName: 'Tussey Mountain', key: '2', imagePath: tusseyMountainLogo, text: 'Tussey Mountain' },
     { resortName: 'Davos', key: '3', imagePath: davosLogo, text: 'Davos' },
   ]);
-  
+
 
   const getImagePath = (resortName) => {
     switch (resortName) {
@@ -90,28 +90,28 @@ function ResortScreen({ navigation, route }) {
       default:
     }
   };
-  
+
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
       <FlatList
         data={resorts}
         renderItem={({ item }) => (
-        <View style={{ alignItems: 'center' }}>
-          <View style={styles.rectangleBorderResorts}>
-            <Text style={[styles.topText, { textAlign: 'center', justifyContent: 'center' }]}>{item.text}</Text>
+          <View style={{ alignItems: 'center' }}>
+            <View style={styles.rectangleBorderResorts}>
+              <Text style={[styles.topText, { textAlign: 'center', justifyContent: 'center' }]}>{item.text}</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.rectangleBoxResorts}
+              onPress={() => {
+                const logo = getImagePath(item.resortName);
+                route.params.updateResortLogo(logo);
+                navigation.navigate(item.resortName, { name: item.resortName });
+              }}
+            >
+              <Image source={getImagePath(item.resortName)} style={styles.resortLogoResorts} resizeMode="contain" />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-          style={styles.rectangleBoxResorts}
-          onPress={() => {
-            const logo = getImagePath(item.resortName);
-            route.params.updateResortLogo(logo);
-            navigation.navigate(item.resortName, { name: item.resortName });
-          }}
-          >
-          <Image source={getImagePath(item.resortName)} style={styles.resortLogoResorts} resizeMode="contain" />
-          </TouchableOpacity>
-        </View>
         )}
       />
 
@@ -124,7 +124,7 @@ function TrackingScreen({ navigation, route }) {
   const params = route ? route.params : navigation.state.params;
   const { timerIntervals, setTimerIntervals } = {
     timerIntervals: [],
-    setTimerIntervals: () => {},
+    setTimerIntervals: () => { },
     ...params,
   };
   useEffect(() => {
@@ -251,19 +251,19 @@ function SplugenResortScreen({ navigation }) {
         </View>
       </TouchableOpacity>
       <View>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('FullScreenImage', {
-          source: require('./assets/splugen_map.jpg'),
-          })
-        }
-      >
-        <Image
-          source={require("./assets/splugen_map.jpg")}
-          resizeMode="contain"
-          style={{ height: height, width: width, marginTop: -250, zIndex: -1 }}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('FullScreenImage', {
+              source: require('./assets/splugen_map.jpg'),
+            })
+          }
+        >
+          <Image
+            source={require("./assets/splugen_map.jpg")}
+            resizeMode="contain"
+            style={{ height: height, width: width, marginTop: -250, zIndex: -1 }}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -334,12 +334,21 @@ function DavosResortScreen({ navigation }) {
         </View>
       </TouchableOpacity>
       <View>
-        <Image
-          source={require("./assets/davos_map.jpg")}
-          resizeMode="contain"
-          style={{ height: height, width: width, marginTop: -250 }}
-        />
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('FullScreenImage', {
+              source: require('./assets/davos_map.jpg'),
+            })
+          }
+        >
+          <Image
+            source={require("./assets/davos_map.jpg")}
+            resizeMode="contain"
+            style={{ height: height, width: width, marginTop: -250 }}
+          />
+        </TouchableOpacity>
       </View>
+
     </View>
   );
 
@@ -404,17 +413,26 @@ function TusseyResortScreen({ navigation }) {
         <Weather lat={40.7692} lon={77.7539} lan={language} un={unit} />
       </View>
       <View
-      style={{ justifyContent: 'center', alignItems: 'center'}}>
-      <TouchableOpacity onPress={() => handleSkiPatrolPress()} style={styles.buttonContainer}>
-        <View style={styles.button}>
-          <Text style={styles.topText}>Ski patrol number: +1 303-988-1111</Text>
-        </View>
-      </TouchableOpacity>
-        <Image
-          source={require("./assets/tussey_mountain_map.webp")}
-          resizeMode="contain"
-          style={{ height: height*0.9, width: width*0.9, alignSelf:'center', marginTop:-180 }}
-        />
+        style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => handleSkiPatrolPress()} style={styles.buttonContainer}>
+          <View style={styles.button}>
+            <Text style={styles.topText}>Ski patrol number: +1 303-988-1111</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('FullScreenImage', {
+              source: require('./assets/tussey_mountain_map.webp'),
+            })
+          }
+        >
+          <Image
+            onPress
+            source={require("./assets/tussey_mountain_map.webp")}
+            resizeMode="contain"
+            style={{ height: height * 0.9, width: width * 0.9, alignSelf: 'center', marginTop: -180 }}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -436,42 +454,6 @@ function FullScreenImageScreen({ route }) {
 const Stack = createStackNavigator();
 
 
-/*
-export default function App() {
-  const [data, setData] = useState({});
-  
-  useEffect(() => {
-    _subscribe();
-  }, []);
-
-  const _subscribe = () => {
-    this._subscription = Accelerometer.addListener(accelerometerData => {
-      setData(accelerometerData);
-    });
-  };
-  
-  let { x, y, z } = data;
-
-  const getAcceleration = (ax, ay, az) => {
-    return Math.sqrt(ax*ax+ay*ay+az*az);
-  };
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <Text>SKI ACCIDENT DETECTOR</Text>
-      </View>
-      <TouchableOpacity
-        style={styles.roundButton}>
-        <Text style={styles.whiteText}>START</Text>
-      </TouchableOpacity>
-      <View style={styles.topContainer}>
-        <Text>SKI ACCIDENT DETECTOR</Text>
-      </View>
-    </View>
-  );
-};
-*/
 function App() {
 
   const [data, setData] = useState({
@@ -555,7 +537,7 @@ function App() {
           name="Davos"
           component={DavosResortScreen}
           options={({ route }) => ({ title: route.params.name })}
-          />
+        />
         <Stack.Screen
           name="FullScreenImage"
           component={FullScreenImageScreen}
@@ -626,9 +608,9 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontFamily: 'Roboto',
   },
-  blackText:{
+  blackText: {
     fontFamily: 'Roboto',
-    fontSize:35,
+    fontSize: 35,
     marginBottom: 10,
     color: 'black'
   },
@@ -665,7 +647,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flexDirection: 'row',
   },
-  
+
   bottomItem: {
     justifyContent: 'space-evenly',
     alignContent: 'center',
@@ -707,7 +689,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: 0x73c2f9,
   },
-  
+
   rectangleBorderHome: {
     borderWidth: 3,
     borderColor: 0x73c2f9,
@@ -725,7 +707,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-  },  
+  },
   rectangleBorderSplugen: {
     borderWidth: 3,
     borderColor: 0x73c2f9,
@@ -735,7 +717,7 @@ const styles = StyleSheet.create({
     width: 180,
     marginTop: 30,
     marginLeft: 115,
-  },  
+  },
   topTextSplugen: {
     fontSize: 28,
     color: 0x73c2fb,
