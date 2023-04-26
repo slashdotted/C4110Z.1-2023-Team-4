@@ -14,10 +14,26 @@ const davosLogo = require('./assets/davos_logo.png');
 
 var runningStatus = false;
 
+const getImagePath = (resortName) => {
+  switch (resortName) {
+    case 'Splügen':
+      return require('./assets/splugen_logo.png');
+    case 'Tussey Mountain':
+      return require('./assets/tussey_mountain_logo.webp');
+    case 'Davos':
+      return require('./assets/davos_logo.png');
+    default:
+  }
+};
+
 function HomeScreen({ navigation }) {
 
   const [resortLogo, setResortLogo] = useState(require('./assets/splugen_logo.png'));
-  const [timerIntervals, setTimerIntervals] = useState([]);
+  const [timerIntervals, setTimerIntervals] = useState({
+    'Splügen': [],
+    'Tussey Mountain': [],
+    'Davos': [],
+  });
 
   const onTimerLogoPress = () => {
     navigation.navigate('TrackingScreen', {
@@ -42,7 +58,19 @@ function HomeScreen({ navigation }) {
         style={styles.roundButton}
         onPress={() => {
           runningStatus = !runningStatus;
-          navigation.navigate('TrackingScreen', { name: 'Track your day', timerIntervals: timerIntervals, setTimerIntervals: setTimerIntervals, });
+          const selectedResort = Object.keys(timerIntervals).find(resortName =>
+            getImagePath(resortName) === resortLogo
+          );
+          const resortTimers = timerIntervals[selectedResort] || [];
+        
+          navigation.navigate('TrackingScreen', {
+            name: 'Track your day',
+            selectedResort,
+            timerIntervals: resortTimers,
+            setTimerIntervals: newIntervals => {
+              setTimerIntervals({ ...timerIntervals, [selectedResort]: newIntervals });
+            },
+          });
         }}
       >
         <Image source={require('./assets/icon.png')} style={styles.logo} />
@@ -77,19 +105,6 @@ function ResortScreen({ navigation, route }) {
     { resortName: 'Tussey Mountain', key: '2', imagePath: tusseyMountainLogo, text: 'Tussey Mountain' },
     { resortName: 'Davos', key: '3', imagePath: davosLogo, text: 'Davos' },
   ]);
-
-
-  const getImagePath = (resortName) => {
-    switch (resortName) {
-      case 'Splügen':
-        return require('./assets/splugen_logo.png');
-      case 'Tussey Mountain':
-        return require('./assets/tussey_mountain_logo.webp');
-      case 'Davos':
-        return require('./assets/davos_logo.png');
-      default:
-    }
-  };
 
 
   return (
@@ -171,6 +186,13 @@ function TrackingScreen({ navigation, route }) {
     navigation.navigate('Home');
   };
 
+  const onClearIntervalsButtonPress = () => {
+    runningStatus = !runningStatus;
+    setTimerIntervals([]);
+    setTime(0);
+    navigation.navigate('Home');
+  };
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', marginBottom: 175 }}>
       {timerIntervals.map((interval, index) => (
@@ -181,6 +203,11 @@ function TrackingScreen({ navigation, route }) {
       <TouchableOpacity onPress={onStopButtonPress} style={styles.roundButtonTracking}>
         <Image source={require('./assets/icon.png')} style={styles.logo} />
       </TouchableOpacity>
+      <View style ={{top: 80}}>
+      <TouchableOpacity onPress={onClearIntervalsButtonPress} style={styles.navBarItemContainer}>
+        <Text style={styles.navBarItem}>Clear intervals</Text>
+      </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -406,8 +433,8 @@ function TusseyResortScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.rectangleBorderSplugen}>
-        <Text style={[styles.topTextSplugen, { textAlign: 'center', justifyContent: 'center' }]}>Tussey Mountain</Text>
+      <View style={styles.rectangleBorderTussey}>
+        <Text style={[styles.topTextTussey, { textAlign: 'center', justifyContent: 'center' }]}>Tussey Mountain</Text>
       </View>
       <View style={styles.weatherContainer}>
         <Weather lat={40.7692} lon={77.7539} lan={language} un={unit} />
@@ -421,7 +448,7 @@ function TusseyResortScreen({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('FullScreenImage', {
+            navigation.navigate('FullScreenImageTussey', {
               source: require('./assets/tussey_mountain_map.webp'),
             })
           }
@@ -430,7 +457,7 @@ function TusseyResortScreen({ navigation }) {
             onPress
             source={require("./assets/tussey_mountain_map.webp")}
             resizeMode="contain"
-            style={{ height: height * 0.9, width: width * 0.9, alignSelf: 'center', marginTop: -180 }}
+            style={{ height: height * 0.8, width: width * 0.8, alignSelf: 'center', marginTop: -145 }}
           />
         </TouchableOpacity>
       </View>
@@ -446,6 +473,20 @@ function FullScreenImageScreen({ route }) {
         source={source}
         resizeMode="contain"
         style={styles.fullScreenImage}
+      />
+    </View>
+  );
+}
+
+function FullScreenImageScreenTussey({ route }) {
+  const { source } = route.params;
+
+  return (
+    <View style={styles.fullScreenImageContainer}>
+      <Image
+        source={source}
+        resizeMode="contain"
+        style={styles.fullScreenImageTussey}
       />
     </View>
   );
@@ -541,6 +582,11 @@ function App() {
         <Stack.Screen
           name="FullScreenImage"
           component={FullScreenImageScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="FullScreenImageTussey"
+          component={FullScreenImageScreenTussey}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
@@ -718,6 +764,16 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 115,
   },
+  rectangleBorderTussey: {
+    borderWidth: 3,
+    borderColor: 0x73c2f9,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 260,
+    marginTop: 30,
+    marginLeft: 78,
+  },
   topTextSplugen: {
     fontSize: 28,
     color: 0x73c2fb,
@@ -791,4 +847,15 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     transform: [{ rotate: '90deg' }],
   },
+  fullScreenImageTussey: {
+    width: '100%',
+    height: '100%',
+    aspectRatio: 0.5,
+    resizeMode: 'contain',
+    transform: [{ rotate: '90deg' }],
+  },
+  topTextTussey:{
+    fontSize: 28,
+    color: 0x73c2fb,
+  }
 });
