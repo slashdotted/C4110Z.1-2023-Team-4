@@ -258,6 +258,157 @@ function SplugenResortScreen({ navigation }) {
 
 }
 
+function DavosResortScreen({ navigation }) {
+
+  const [language, setLanguage] = useState("en");
+  const [unit, setUnit] = useState("metric");
+  const { width, height } = Dimensions.get('window');
+
+  const handleSkiPatrolPress = () => {
+    Alert.alert(
+      "Ski Patrol",
+      "The ski patrol is being called",
+      [
+        {
+          text: "OK",
+          onPress: () => console.log("OK Pressed"),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  return (
+    <View>
+      <View style={styles.navBar}>
+        <View style={styles.lanMenu}>
+          <TouchableOpacity
+            onPress={() => setLanguage("en")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>English</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setLanguage("it")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>Italiano</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.unitMenu}>
+          <TouchableOpacity
+            onPress={() => setUnit("metric")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>Metric</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setUnit("imperial")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>Imperial</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.rectangleBorderSplugen}>
+        <Text style={[styles.topTextSplugen, { textAlign: 'center', justifyContent: 'center' }]}>Davos</Text>
+      </View>
+      <View style={styles.weatherContainer}>
+        <Weather lat={46.8027} lon={9.8360} lan={language} un={unit} />
+      </View>
+      <TouchableOpacity onPress={() => handleSkiPatrolPress()} style={styles.buttonContainer}>
+        <View style={styles.button}>
+          <Text style={styles.topText}>Ski patrol number: 144</Text>
+        </View>
+      </TouchableOpacity>
+      <View>
+        <Image
+          source={require("./assets/davos_map.jpg")}
+          resizeMode="contain"
+          style={{ height: height, width: width, marginTop: -250 }}
+        />
+      </View>
+    </View>
+  );
+
+}
+
+function TusseyResortScreen({ navigation }) {
+
+  const [language, setLanguage] = useState("en");
+  const [unit, setUnit] = useState("metric");
+  const { width, height } = Dimensions.get('window');
+
+  const handleSkiPatrolPress = () => {
+    Alert.alert(
+      "Ski Patrol",
+      "The ski patrol is being called",
+      [
+        {
+          text: "OK",
+          onPress: () => console.log("OK Pressed"),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  return (
+    <View>
+      <View style={styles.navBar}>
+        <View style={styles.lanMenu}>
+          <TouchableOpacity
+            onPress={() => setLanguage("en")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>English</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setLanguage("it")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>Italiano</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.unitMenu}>
+          <TouchableOpacity
+            onPress={() => setUnit("metric")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>Metric</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setUnit("imperial")}
+            style={styles.navBarItemContainer}
+          >
+            <Text style={styles.navBarItem}>Imperial</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.rectangleBorderSplugen}>
+        <Text style={[styles.topTextSplugen, { textAlign: 'center', justifyContent: 'center' }]}>Tussey Mountain</Text>
+      </View>
+      <View style={styles.weatherContainer}>
+        <Weather lat={40.7692} lon={77.7539} lan={language} un={unit} />
+      </View>
+      <View
+      style={{ justifyContent: 'center', alignItems: 'center'}}>
+      <TouchableOpacity onPress={() => handleSkiPatrolPress()} style={styles.buttonContainer}>
+        <View style={styles.button}>
+          <Text style={styles.topText}>Ski patrol number: +1 303-988-1111</Text>
+        </View>
+      </TouchableOpacity>
+        <Image
+          source={require("./assets/tussey_mountain_map.webp")}
+          resizeMode="contain"
+          style={{ height: height*0.9, width: width*0.9, alignSelf:'center', marginTop:-180 }}
+        />
+      </View>
+    </View>
+  );
+
+}
+
 const Stack = createStackNavigator();
 
 
@@ -369,6 +520,16 @@ function App() {
         <Stack.Screen
           name="Splügen"
           component={SplugenResortScreen}
+          options={({ route }) => ({ title: route.params.name })}
+        />
+        <Stack.Screen
+          name="Tussey Mountain"
+          component={TusseyResortScreen}
+          options={({ route }) => ({ title: route.params.name })}
+        />
+        <Stack.Screen
+          name="Davos"
+          component={DavosResortScreen}
           options={({ route }) => ({ title: route.params.name })}
         />
       </Stack.Navigator>

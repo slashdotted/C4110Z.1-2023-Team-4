@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
-import axios from "axios";
-import App from "./App";
 
 const Weather = ({ lat, lon, lan, un }) => {
   const [weatherData, setWeatherData] = useState(null);
