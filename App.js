@@ -15,6 +15,8 @@ const davosLogo = require('./assets/davos_logo.png');
 var runningStatus = false;
 
 function HomeScreen({ navigation }) {
+
+  const [resortLogo, setResortLogo] = useState(require('./assets/splugen_logo.png'));
   const [timerIntervals, setTimerIntervals] = useState([]);
 
   const onTimerLogoPress = () => {
@@ -30,10 +32,10 @@ function HomeScreen({ navigation }) {
       </View>
       <TouchableOpacity style={styles.rectangleBox}
         onPress={() => {
-          navigation.navigate('Resort', { name: 'Resort' })
+          navigation.navigate('Resort', { name: 'Resort', updateResortLogo: setResortLogo });
         }}
       >
-        <Image source={require('./assets/splugen_logo.png')} style={styles.resortLogoHome} />
+        <Image source={resortLogo} style={[styles.resortLogoHome, {resizeMode: 'contain'}]} />
       </TouchableOpacity>
       <Text style={[styles.blueText, { height: 50, marginTop: 50 }]}>START TRACKING</Text>
       <TouchableOpacity
@@ -69,7 +71,7 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function ResortScreen({ navigation }) {
+function ResortScreen({ navigation, route }) {
   const [resorts, setResorts] = useState([
     { resortName: 'Splügen', key: '1', imagePath: splugenLogo, text: 'Splügen' },
     { resortName: 'Tussey Mountain', key: '2', imagePath: tusseyMountainLogo, text: 'Tussey Mountain' },
@@ -102,6 +104,8 @@ function ResortScreen({ navigation }) {
           <TouchableOpacity
           style={styles.rectangleBoxResorts}
           onPress={() => {
+            const logo = getImagePath(item.resortName);
+            route.params.updateResortLogo(logo);
             navigation.navigate(item.resortName, { name: item.resortName });
           }}
           >
@@ -247,11 +251,19 @@ function SplugenResortScreen({ navigation }) {
         </View>
       </TouchableOpacity>
       <View>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('FullScreenImage', {
+          source: require('./assets/splugen_map.jpg'),
+          })
+        }
+      >
         <Image
           source={require("./assets/splugen_map.jpg")}
           resizeMode="contain"
-          style={{ height: height, width: width, marginTop: -250 }}
+          style={{ height: height, width: width, marginTop: -250, zIndex: -1 }}
         />
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -406,7 +418,19 @@ function TusseyResortScreen({ navigation }) {
       </View>
     </View>
   );
+}
+function FullScreenImageScreen({ route }) {
+  const { source } = route.params;
 
+  return (
+    <View style={styles.fullScreenImageContainer}>
+      <Image
+        source={source}
+        resizeMode="contain"
+        style={styles.fullScreenImage}
+      />
+    </View>
+  );
 }
 
 const Stack = createStackNavigator();
@@ -531,6 +555,11 @@ function App() {
           name="Davos"
           component={DavosResortScreen}
           options={({ route }) => ({ title: route.params.name })}
+          />
+        <Stack.Screen
+          name="FullScreenImage"
+          component={FullScreenImageScreen}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -766,5 +795,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 2,
     marginRight: 5,
+  },
+  fullScreenImageContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fullScreenImage: {
+    width: '100%',
+    height: '100%',
+    aspectRatio: 0.9,
+    resizeMode: 'contain',
+    transform: [{ rotate: '90deg' }],
   },
 });
