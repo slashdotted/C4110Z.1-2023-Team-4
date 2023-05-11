@@ -20,5 +20,17 @@ The goal for this project is to create a prototype for an application to detect 
 - https://patents.google.com/patent/US8990041B2/en
 - https://patents.google.com/patent/US9588135
 
-## Download
-Here you will be able to download the latest release of the application.
+## Install Information
+- To run our application you need to install the ExpoGo App on your mobile phone.
+- You also have to install the following libraries using npm:
+  - `npm install expo-sensors`
+  - `npm install @react-navigation/native`
+  - `npm install @react-navigation/stack`
+  - `npm install @react-native-maps`
+  - `npm install expo-location`
+- After having downloaded the libraries you can run the application using the command:
+  - `expo start` or `expo start --tunnel`
+  - `npm start` or `npm start --tunnel` are also alternative ways to start
+- After waiting a couple of minutes a QR Code will appear along with the debug menu
+- To start the application just scan the QR Code with the ExpoGo App
+- You can also write the "a" command to open an Android emulator and run the application that way 
