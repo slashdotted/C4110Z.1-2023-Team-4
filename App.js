@@ -5,57 +5,11 @@ import { Accelerometer, Gyroscope } from 'expo-sensors';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Weather from "./Weather";
-import MapView, { PROVIDER_GOOGLE ,Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
+import Map from './Map';
 
 const splugenLogo = require('./assets/splugen_logo.png');
 const tusseyMountainLogo = require('./assets/tussey_mountain_logo.webp');
 const davosLogo = require('./assets/davos_logo.png');
-
-
-const MapScreen = () => {
-  const [region, setRegion] = useState(null);
-  const [mapReady, setMapReady] = useState(false);
-
-  useEffect(() => {
-    if(mapReady){
-      (async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          alert('Permission to access location was denied');
-          return;
-        }
-  
-        let location = await Location.getCurrentPositionAsync({});
-        setRegion({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-      })();
-    }
-    
-  }, [mapReady]);
-
-  return (
-    <View style={styles.container}>
-      {region && (
-        <MapView
-          provider={PROVIDER_GOOGLE}
-          style={styles.map}
-          initialRegion={region}
-          showsUserLocation={true}
-          followsUserLocation={true}
-          loadingEnabled={true}
-          onLayout={() => setMapReady(true)}
-        >
-          <Marker coordinate={region} />
-        </MapView>
-      )}
-    </View>
-  );
-};
 
 var runningStatus = false;
 
@@ -164,8 +118,8 @@ function ResortScreen({ navigation, route }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
       <View>
-      <TouchableOpacity onPress={() => navigation.navigate('Map')}>
-  <Text>Show Map</Text>
+      <TouchableOpacity style={[styles.rectangleBoxMap, { marginBottom: 20}]} onPress={() => navigation.navigate('Map')}>
+  <Text style={[styles.whiteText, { marginTop: 5 }]}>Show Map</Text>
 </TouchableOpacity>
       </View>
       <FlatList
@@ -650,7 +604,7 @@ function App() {
         />
         <Stack.Screen
           name="Map"
-          component={MapScreen}
+          component={Map}
           options={{ title: 'Map' }}
         />
 
@@ -712,7 +666,8 @@ const styles = StyleSheet.create({
   },
   whiteText: {
     color: 'white',
-    fontSize: 48,
+    fontSize: 30,
+    fontFamily: 'Roboto',
   },
   blueText: {
     color: 0x73c2fb,
@@ -780,6 +735,17 @@ const styles = StyleSheet.create({
   rectangleBox: {
     backgroundColor: 0x73c2c9,
     height: 110,
+    width: 370,
+    padding: 3,
+    borderRadius: 20,
+    marginTop: 15,
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: 0x73c2f9,
+  },
+  rectangleBoxMap: {
+    backgroundColor: 0x73c2c9,
+    height: 70,
     width: 370,
     padding: 3,
     borderRadius: 20,
